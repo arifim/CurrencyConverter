@@ -5,18 +5,24 @@
 //  Created by arif rakhmanov on 8/25/25.
 //
 
-import Foundation
+import SwiftUI
 import Combine
 import Network
 
 
 class CurrencyViewModel: ObservableObject {
     
+    @AppStorage("basecurrency") var baseCurrency: String = ""
     @Published var rates: [String : Double] = [:]
     @Published var errorMessage: String?
-    @Published var allCurrencies = CurrencyLoader.loadCurrencies()
     @Published var isLoading = false
     @Published var isConnected = true
+    @Published var allCurrencies = CurrencyLoader.loadCurrencies()
+    @Published var selectedCurrencies: [String] = [] {
+        didSet {
+            UserDefaults.standard.set(selectedCurrencies, forKey: "selectedcurrencies")
+        }
+    }
     
     private var cancellables = Set<AnyCancellable>()
     private let service = ExchangeRateService()
@@ -24,8 +30,9 @@ class CurrencyViewModel: ObservableObject {
     private let networkQueue = DispatchQueue(label: "NetworkMonitoring")
     
     init() {
-            startNetworkMonitoring()
-        }
+        selectedCurrencies = UserDefaults.standard.stringArray(forKey: "selectedcurrencies") ?? ["usd", "rub", "azn", "gel"]
+        startNetworkMonitoring()
+    }
     
     private func startNetworkMonitoring() {
         networkMonitor.pathUpdateHandler = { [weak self] path in
@@ -86,9 +93,9 @@ class CurrencyViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    func displayCurrency(for selectedCurrency: [String]) -> [DisplayCurrency] {
+    func userSelectedCurrencies() -> [DisplayCurrency] {
         
-        let filtered = allCurrencies.filter { selectedCurrency.contains($0.code) }
+        let filtered = allCurrencies.filter { selectedCurrencies.contains($0.code) }
         
         return filtered.map { currency in
             let rate = rates[currency.code] ?? 0.0

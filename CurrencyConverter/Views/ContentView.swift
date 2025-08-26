@@ -9,11 +9,11 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @State var baseCurrency = "usd"
-    @State var selectedCurrencies = ["rub", "gel", "eur", "azn"]
-    @State var amountText: String = ""
     @StateObject var viewModel = CurrencyViewModel()
     @FocusState private var isTextFieldFocused: Bool
+    
+    @State var amountText: String = ""
+    
     
     var body: some View {
         
@@ -21,8 +21,8 @@ struct ContentView: View {
             List {
                 Section("Selected currency") {
                     HStack {
-                        Text(viewModel.getFlag(for: baseCurrency))
-                        Text(baseCurrency.uppercased())
+                        Text(viewModel.getFlag(for: viewModel.baseCurrency))
+                        Text(viewModel.baseCurrency.uppercased())
                         TextField("1", text: $amountText)
                             .multilineTextAlignment(.trailing)
                             .keyboardType(.numberPad)
@@ -31,7 +31,7 @@ struct ContentView: View {
                 }
                 if viewModel.isConnected {
                     Section("converted currencies") {
-                        ForEach (Array(viewModel.displayCurrency(for: selectedCurrencies).enumerated()), id: \.offset) {index, item in
+                        ForEach (indexedCurrencies, id: \.offset) {index, item in
                             
                             CurrencyRowView(
                                 item: item,
@@ -39,24 +39,20 @@ struct ContentView: View {
                                 delay: index,
                                 vm: viewModel
                             )
-                            .id(item.currency.code + baseCurrency)
+                            .id(item.currency.code + viewModel.baseCurrency)
                             .onTapGesture {
-                                selectedCurrencies.append(baseCurrency)
-                                selectedCurrencies.removeAll {
+                                viewModel.selectedCurrencies.append(viewModel.baseCurrency)
+                                viewModel.selectedCurrencies.removeAll {
                                     $0 == item.currency.code
                                 }
-                                baseCurrency = item.currency.code
+                                viewModel.baseCurrency = item.currency.code
                                 amountText = ""
-                                viewModel.loadRates(baseCurrency: baseCurrency)
+                                viewModel.loadRates(baseCurrency: viewModel.baseCurrency)
                             }
                         }
                     }
                 } else {
-                    ContentUnavailableView(
-                        "No internet connection",
-                        systemImage: "wifi.slash",
-                        description: Text("Check your internet connection")
-                    )
+                    noInternetConnection
                 }
             }
             .navigationTitle("Currency Converter")
@@ -64,13 +60,23 @@ struct ContentView: View {
             
         }
         .onAppear() {
-            viewModel.loadRates(baseCurrency: baseCurrency)
+            viewModel.selectedCurrencies = viewModel.selectedCurrencies.filter { $0 != viewModel.baseCurrency }
+            viewModel.loadRates(baseCurrency: viewModel.baseCurrency)
         }
-        .onTapGesture {
-            isTextFieldFocused = false
-        }
-        
     } // bodu
+    
+    private var indexedCurrencies: [EnumeratedSequence<[DisplayCurrency]>.Element] {
+        Array(viewModel.userSelectedCurrencies().enumerated())
+    }
+    
+    private var noInternetConnection: some View {
+        ContentUnavailableView(
+            "No internet connection",
+            systemImage: "wifi.slash",
+            description: Text("Check your internet connection")
+        )
+    }
+    
 } // ContentView
 
 #Preview {
