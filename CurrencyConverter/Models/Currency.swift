@@ -25,3 +25,9 @@ struct Currency: Codable, Identifiable, Equatable {
 struct CurrencyList: Codable {
     let currencies: [Currency]
 }
+
+struct DisplayCurrency: Identifiable {
+    let id = UUID()
+    let currency: Currency
+    let rate: Double
+}
