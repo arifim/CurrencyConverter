@@ -30,11 +30,15 @@ struct CurrencyRowView: View {
         .offset(x: isVisible ? 0 : 350)
         .opacity(isVisible ? 1 : 0.5)
         .onAppear {
+            isVisible = false
             DispatchQueue.main.asyncAfter(deadline: .now() + Double(delay) * 0.1) {
                 withAnimation(.easeOut(duration: 0.2)) {
                     isVisible = true
                 }
             }
+        }
+        .onDisappear {
+            isVisible = false
         }
     }
     

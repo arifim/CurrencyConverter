@@ -19,51 +19,19 @@ struct ContentView: View {
         
         NavigationStack {
             List {
-                Section("Selected currency") {
-                    HStack {
-                        Text(viewModel.getFlag(for: viewModel.baseCurrency))
-                        Text(viewModel.baseCurrency.uppercased())
-                        TextField("1", text: $amountText)
-                            .multilineTextAlignment(.trailing)
-                            .keyboardType(.numberPad)
-                            .focused($isTextFieldFocused)
-                    }
-                }
+                selectedCurrencySection
                 if viewModel.isConnected {
-                    Section("converted currencies") {
-                        ForEach (indexedCurrencies, id: \.offset) {index, item in
-                            
-                            CurrencyRowView(
-                                item: item,
-                                amountText: amountText,
-                                delay: index,
-                                vm: viewModel
-                            )
-                            .id(item.currency.code + viewModel.baseCurrency)
-                            .onTapGesture {
-                                viewModel.selectedCurrencies.append(viewModel.baseCurrency)
-                                viewModel.selectedCurrencies.removeAll {
-                                    $0 == item.currency.code
-                                }
-                                viewModel.baseCurrency = item.currency.code
-                                amountText = ""
-                                viewModel.loadRates(baseCurrency: viewModel.baseCurrency)
-                            }
-                        }
-                    }
+                    convertedCurrenciesSection
                 } else {
                     noInternetConnection
                 }
             }
             .navigationTitle("Currency Converter")
-            
-            
         }
         .onAppear() {
-            viewModel.selectedCurrencies = viewModel.selectedCurrencies.filter { $0 != viewModel.baseCurrency }
-            viewModel.loadRates(baseCurrency: viewModel.baseCurrency)
+            setupInitialData()
         }
-    } // bodu
+    } // body
     
     private var indexedCurrencies: [EnumeratedSequence<[DisplayCurrency]>.Element] {
         Array(viewModel.userSelectedCurrencies().enumerated())
@@ -76,6 +44,48 @@ struct ContentView: View {
             description: Text("Check your internet connection")
         )
     }
+    
+    // MARK: - View Components
+        private var selectedCurrencySection: some View {
+            Section("Selected currency") {
+                HStack {
+                    Text(viewModel.getFlag(for: viewModel.baseCurrency))
+                    Text(viewModel.baseCurrency.uppercased())
+                    TextField("1", text: $amountText)
+                        .multilineTextAlignment(.trailing)
+                        .keyboardType(.numberPad)
+                        .focused($isTextFieldFocused)
+                }
+            }
+        }
+        
+        private var convertedCurrenciesSection: some View {
+            Section("converted currencies") {
+                ForEach(indexedCurrencies, id: \.offset) { index, item in
+                    CurrencyRowView(
+                        item: item,
+                        amountText: amountText,
+                        delay: index,
+                        vm: viewModel
+                    )
+                    .id(item.currency.code + viewModel.baseCurrency)
+                    .onTapGesture {
+                        selectCurrency(item.currency.code)
+                    }
+                }
+            }
+        }
+    
+    // MARK: - Actions
+        private func selectCurrency(_ currencyCode: String) {
+            viewModel.swapBaseCurrency(to: currencyCode)
+            amountText = ""
+        }
+        
+        private func setupInitialData() {
+            viewModel.removeBaseCurrencyFromSelection()
+            viewModel.loadRates()
+        }
     
 } // ContentView
 

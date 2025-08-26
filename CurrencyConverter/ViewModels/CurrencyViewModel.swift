@@ -12,7 +12,7 @@ import Network
 
 class CurrencyViewModel: ObservableObject {
     
-    @AppStorage("basecurrency") var baseCurrency: String = ""
+    @AppStorage("basecurrency") var baseCurrency: String = "usd"
     @Published var rates: [String : Double] = [:]
     @Published var errorMessage: String?
     @Published var isLoading = false
@@ -34,6 +34,10 @@ class CurrencyViewModel: ObservableObject {
         startNetworkMonitoring()
     }
     
+    deinit {
+        networkMonitor.cancel()
+    }
+    
     private func startNetworkMonitoring() {
         networkMonitor.pathUpdateHandler = { [weak self] path in
             DispatchQueue.main.async {
@@ -52,19 +56,18 @@ class CurrencyViewModel: ObservableObject {
     private func retryLoadingIfNeeded() {
         // Only retry if we don't have data and we're not currently loading
         if rates.isEmpty && !isLoading {
-            loadRates(baseCurrency: "usd") // Use your base currency
+            loadRates()
         }
     }
     
     private func handleLoadingError(_ error: Error) {
         if !isConnected {
-            errorMessage = "No internet connection"
-        } else if error.localizedDescription.contains("timeout") ||
-                  error.localizedDescription.contains("timed out") {
-            errorMessage = "Connection timeout - please check your internet"
-        } else {
-            errorMessage = error.localizedDescription
-        }
+                errorMessage = "No internet connection"
+            } else if let urlError = error as? URLError, urlError.code == .timedOut {
+                errorMessage = "Connection timeout - please check your internet"
+            } else {
+                errorMessage = error.localizedDescription
+            }
         // Keep isLoading = true
     }
     
@@ -104,17 +107,24 @@ class CurrencyViewModel: ObservableObject {
     }
     
     func getFlag(for code: String) -> String {
-        
-        let currency = allCurrencies.first { c in
-            c.code == code
-        }
-        guard let currency = currency else {return ""}
-        return currency.flag
+        allCurrencies.first { $0.code == code }?.flag ?? "🏳️"
     }
-}
+    
+    func loadRates() {
+        loadRates(baseCurrency: baseCurrency)
+    }
+    
+    func swapBaseCurrency(to newCurrency: String) {
+        guard newCurrency != baseCurrency else { return }
+        if !selectedCurrencies.contains(baseCurrency) {
+            selectedCurrencies.append(baseCurrency)
+        }
+        selectedCurrencies.removeAll { $0 == newCurrency }
+        baseCurrency = newCurrency
+        loadRates()
+    }
 
-struct TimeoutError: Error, LocalizedError {
-    var errorDescription: String? {
-        return "Connection timeout - please check your internet"
+    func removeBaseCurrencyFromSelection() {
+        selectedCurrencies = selectedCurrencies.filter { $0 != baseCurrency }
     }
 }
