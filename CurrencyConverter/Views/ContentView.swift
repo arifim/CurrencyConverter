@@ -72,24 +72,51 @@ struct ContentView: View {
                     .font(.largeTitle)
                 Text(viewModel.baseCurrency.uppercased())
                     .font(.title3)
-                TextField("1", text: $amountText)
+                
+                TextField("1.00", text: $amountText)
                     .multilineTextAlignment(.trailing)
                     .font(.title3).bold()
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(isValidAmount ? .blue : .red)
                     .keyboardType(.decimalPad)
                     .focused($isTextFieldFocused)
+                    .onChange(of: amountText) { _, newValue in
+                        // Sanitize input in real-time
+                        let sanitized = newValue.sanitizedDecimalInput
+                        if sanitized != newValue {
+                            amountText = sanitized
+                            // Add haptic feedback for invalid input
+                            let impactFeedback = UIImpactFeedbackGenerator(style: .light)
+                            impactFeedback.impactOccurred()
+                        }
+                        
+                        // Limit to reasonable length (e.g., 10 characters)
+                        if amountText.count > 10 {
+                            amountText = String(amountText.prefix(10))
+                        }
+                    }
                     .toolbar {
                         ToolbarItemGroup(placement: .keyboard) {
                             Button("Clear") {
                                 amountText = ""
                             }
+                            .foregroundColor(.blue)
+                            
                             Spacer()
+                            
                             Button("Done") {
                                 isTextFieldFocused = false
                             }
+                            .foregroundColor(.blue)
+                            .fontWeight(.semibold)
                         }
-                        
                     }
+            }
+            
+            // Add validation message if needed
+            if !amountText.isEmpty && !isValidAmount {
+                Text("Please enter a valid number")
+                    .font(.caption)
+                    .foregroundColor(.red)
             }
         }
     }
@@ -140,6 +167,10 @@ struct ContentView: View {
             systemImage: "plus.circle",
             description: Text("Tap 'Add' to select currencies for conversion")
         )
+    }
+    
+    private var isValidAmount: Bool {
+        amountText.isEmpty || (Double(amountText) != nil && Double(amountText)! >= 0)
     }
     
     // MARK: - Actions
