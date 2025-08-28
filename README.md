@@ -43,7 +43,7 @@ Installation 🚀
 
 Clone the repository:
 
-bashgit clone https://github.com/yourusername/CurrencyConverter.git
+bashgit clone https://github.com/arifim/CurrencyConverter.git
 
 Open CurrencyConverter.xcodeproj in Xcode
 Build and run the project
