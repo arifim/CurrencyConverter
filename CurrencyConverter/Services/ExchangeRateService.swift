@@ -16,9 +16,9 @@ class ExchangeRateService {
     
     private let baseURL = "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/"
     
-    func fetchRates(base: String) -> AnyPublisher<ExchangeRateResponce, Error> {
+    func fetchRates(baseCurrancy: String) -> AnyPublisher<ExchangeRateResponce, Error> {
         
-        let urlString = "\(baseURL)\(base).json"
+        let urlString = "\(baseURL)\(baseCurrancy).json"
         guard let url = URL(string: urlString) else {
             return Fail(error: ExchangeRateError.invalidURL).eraseToAnyPublisher()
         }

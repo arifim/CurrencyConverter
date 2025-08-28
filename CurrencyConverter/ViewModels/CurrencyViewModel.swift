@@ -28,9 +28,11 @@ class CurrencyViewModel: ObservableObject {
     private let service = ExchangeRateService()
     private let networkMonitor = NWPathMonitor()
     private let networkQueue = DispatchQueue(label: "NetworkMonitoring")
+    private var lastLoadedBaseCurrency: String?
     
     init() {
-        selectedCurrencies = UserDefaults.standard.stringArray(forKey: "selectedcurrencies") ?? ["usd", "rub", "azn", "gel"]
+        selectedCurrencies = UserDefaults.standard.stringArray(forKey: "selectedcurrencies") ?? ["eur"]
+        baseCurrency = UserDefaults.standard.string(forKey: "basecurrency") ?? "usd"
         startNetworkMonitoring()
     }
     
@@ -72,10 +74,16 @@ class CurrencyViewModel: ObservableObject {
     }
     
     func loadRates(baseCurrency: String) {
+        
+        if lastLoadedBaseCurrency == baseCurrency && !rates.isEmpty {
+            return
+        }
+        
         isLoading = true
         errorMessage = nil
+        lastLoadedBaseCurrency = baseCurrency
         
-        service.fetchRates(base: baseCurrency)
+        service.fetchRates(baseCurrancy: baseCurrency)
             .timeout(.seconds(10), scheduler: DispatchQueue.main)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
@@ -98,7 +106,7 @@ class CurrencyViewModel: ObservableObject {
     
     func userSelectedCurrencies() -> [DisplayCurrency] {
         
-        let filtered = allCurrencies.filter { selectedCurrencies.contains($0.code) }
+        let filtered = allCurrencies.filter { selectedCurrencies.contains($0.code) && $0.code != baseCurrency }
         
         return filtered.map { currency in
             let rate = rates[currency.code] ?? 0.0
@@ -119,12 +127,17 @@ class CurrencyViewModel: ObservableObject {
         if !selectedCurrencies.contains(baseCurrency) {
             selectedCurrencies.append(baseCurrency)
         }
-        selectedCurrencies.removeAll { $0 == newCurrency }
+//        selectedCurrencies.removeAll { $0 == newCurrency }
         baseCurrency = newCurrency
         loadRates()
     }
 
     func removeBaseCurrencyFromSelection() {
         selectedCurrencies = selectedCurrencies.filter { $0 != baseCurrency }
+    }
+    
+    func refreshRates() {
+        lastLoadedBaseCurrency = nil
+        loadRates()
     }
 }

@@ -10,35 +10,54 @@ import SwiftUI
 struct CurrencyRowView: View {
     
     let item: DisplayCurrency
+    let baseCurrency: String
     let amountText: String
     let delay: Int // The row animation delay
     @ObservedObject var vm: CurrencyViewModel
     @State private var isVisible = false
+    @State private var hasAnimated = false
     
     
     var body: some View {
         HStack {
             Text(item.currency.flag)
-            Text(item.currency.name)
+                .font(.largeTitle)
+            VStack(alignment: .leading) {
+                Text(item.currency.code.uppercased())
+                    .font(.title3)
+                Text(item.currency.name)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
             Spacer()
             if vm.isLoading {
                 ProgressView()
             } else {
-                Text(convertedAmount)
+                VStack(alignment: .trailing) {
+                    Text(convertedAmount)
+                        .font(.title3).bold()
+                    let formatedRate = String(format: "%.4f", item.rate)
+                    Text("1 \(baseCurrency.uppercased()) = \(formatedRate) \(item.currency.code.uppercased())")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
             }
         }
         .offset(x: isVisible ? 0 : 350)
         .opacity(isVisible ? 1 : 0.5)
         .onAppear {
-            isVisible = false
-            DispatchQueue.main.asyncAfter(deadline: .now() + Double(delay) * 0.1) {
-                withAnimation(.easeOut(duration: 0.2)) {
-                    isVisible = true
+            
+            if !hasAnimated {
+                isVisible = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + Double(delay) * 0.1) {
+                    withAnimation(.easeOut(duration: 0.2)) {
+                        isVisible = true
+                        hasAnimated = true
+                    }
                 }
+            } else {
+                isVisible = true
             }
-        }
-        .onDisappear {
-            isVisible = false
         }
     }
     
@@ -57,5 +76,5 @@ struct CurrencyRowView: View {
             flag: "🇺🇸"),
         rate: 1.0)
     let vm = CurrencyViewModel()
-    CurrencyRowView(item: currency, amountText: "10.0", delay: 1, vm: vm)
+    CurrencyRowView(item: currency, baseCurrency: "usd", amountText: "10.0", delay: 1, vm: vm)
 }

@@ -21,11 +21,6 @@
             "name": "Angolan Kwanza"
         },
         {
-            "flag": "🇦🇮",
-            "code": "xcd",
-            "name": "East Caribbean Dollar"
-        },
-        {
             "flag": "🇦🇷",
             "code": "ars",
             "name": "Argentine Peso"
@@ -199,11 +194,6 @@
             "flag": "🇩🇯",
             "code": "djf",
             "name": "Djiboutian Franc"
-        },
-        {
-            "flag": "🇩🇲",
-            "code": "xcd",
-            "name": "East Caribbean Dollar"
         },
         {
             "flag": "🇩🇴",
