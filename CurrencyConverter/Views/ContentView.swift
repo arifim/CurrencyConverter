@@ -96,21 +96,43 @@ struct ContentView: View {
     
     private var convertedCurrenciesSection: some View {
         Section("converted currencies") {
-            ForEach(indexedCurrencies, id: \.offset) { index, item in
-                CurrencyRowView(
-                    item: item,
-                    baseCurrency: viewModel.baseCurrency,
-                    amountText: amountText,
-                    delay: index, // For animation
-                    vm: viewModel
-                )
-                .id(item.currency.code + viewModel.baseCurrency)
-                .onTapGesture {
-                    selectCurrency(item.currency.code)
+            if let errorMessage = viewModel.errorMessage {
+                // Show error state with retry option
+                VStack(spacing: 12) {
+                    Image(systemName: "exclamationmark.triangle")
+                        .font(.largeTitle)
+                        .foregroundColor(.orange)
+                    
+                    Text(errorMessage)
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(.secondary)
+                    
+                    Button("Try Again") {
+                        viewModel.refreshRates()
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+            } else {
+                // Show normal currency rows
+                ForEach(indexedCurrencies, id: \.offset) { index, item in
+                    CurrencyRowView(
+                        item: item,
+                        baseCurrency: viewModel.baseCurrency,
+                        amountText: amountText,
+                        delay: index,
+                        vm: viewModel
+                    )
+                    .id(item.currency.code + viewModel.baseCurrency)
+                    .onTapGesture {
+                        selectCurrency(item.currency.code)
+                    }
                 }
             }
         }
     }
+    
     
     private var noCurrenciesSelected: some View {
         ContentUnavailableView(

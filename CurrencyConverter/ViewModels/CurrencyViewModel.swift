@@ -64,13 +64,13 @@ class CurrencyViewModel: ObservableObject {
     
     private func handleLoadingError(_ error: Error) {
         if !isConnected {
-                errorMessage = "No internet connection"
-            } else if let urlError = error as? URLError, urlError.code == .timedOut {
-                errorMessage = "Connection timeout - please check your internet"
-            } else {
-                errorMessage = error.localizedDescription
-            }
-        // Keep isLoading = true
+            errorMessage = "No internet connection"
+        } else if let urlError = error as? URLError, urlError.code == .timedOut {
+            errorMessage = "Connection timeout - please check your internet"
+        } else {
+            errorMessage = error.localizedDescription
+        }
+        isLoading = false  // Always stop loading on error
     }
     
     func loadRates(baseCurrency: String) {
@@ -138,6 +138,11 @@ class CurrencyViewModel: ObservableObject {
     
     func refreshRates() {
         lastLoadedBaseCurrency = nil
+        loadRates()
+    }
+    
+    func retryLoadingRates() {
+        errorMessage = nil
         loadRates()
     }
 }
