@@ -24,11 +24,17 @@ class CurrencyViewModel: ObservableObject {
         }
     }
     
+    private lazy var currencyLookup: [String : Currency] = {
+        Dictionary(uniqueKeysWithValues: allCurrencies.map { ($0.code, $0) })
+    }()
+    
     private var cancellables = Set<AnyCancellable>()
     private let service = ExchangeRateService()
     private let networkMonitor = NWPathMonitor()
     private let networkQueue = DispatchQueue(label: "NetworkMonitoring")
     private var lastLoadedBaseCurrency: String?
+    private var lastRateUpdate: Date?
+    private let cacheValidityDuration: TimeInterval = 300 // 5 minutes
     
     init() {
         selectedCurrencies = UserDefaults.standard.stringArray(forKey: "selectedcurrencies") ?? ["eur"]
@@ -74,9 +80,14 @@ class CurrencyViewModel: ObservableObject {
         isLoading = false  // Always stop loading on error
     }
     
+    private var shouldRefreshRates: Bool {
+        guard let lastUpdate = lastRateUpdate else { return true }
+        return Date().timeIntervalSince(lastUpdate) > cacheValidityDuration
+    }
+    
     func loadRates(baseCurrency: String) {
         
-        if lastLoadedBaseCurrency == baseCurrency && !rates.isEmpty {
+        if lastLoadedBaseCurrency == baseCurrency && !rates.isEmpty && !shouldRefreshRates {
             return
         }
         
@@ -98,37 +109,48 @@ class CurrencyViewModel: ObservableObject {
                     break
                 }
             }, receiveValue: { [weak self] response in
-                self?.rates = response.rates[baseCurrency] ?? [:]
-                self?.isLoading = false  // Only set to false when we successfully get data
-                self?.errorMessage = nil  // Clear any previous errors
+                guard let self = self else { return }
+                self.rates = response.rates[baseCurrency] ?? [:]
+                self.lastRateUpdate = Date()
+                self.isLoading = false  // Only set to false when we successfully get data
+                self.errorMessage = nil  // Clear any previous errors
+                
             })
             .store(in: &cancellables)
     }
     
     func userSelectedCurrencies() -> [DisplayCurrency] {
-        
-        let filtered = allCurrencies.filter { selectedCurrencies.contains($0.code) && $0.code != baseCurrency }
-        
-        return filtered.map { currency in
-            let rate = rates[currency.code] ?? 0.0
+                
+        let filtered = selectedCurrencies.compactMap { code -> DisplayCurrency? in
+            guard code != baseCurrency,
+                  let currency = currencyLookup[code] else { return nil}
+            let rate = rates[code] ?? 0.0
             return DisplayCurrency(currency: currency, rate: rate)
         }
+        
+        return filtered
     }
     
+    // Flag lookup using dictionary
     func getFlag(for code: String) -> String {
-        allCurrencies.first { $0.code == code }?.flag ?? "🏳️"
+        return currencyLookup[code]?.flag ?? "🏳️"
+    }
+    
+    func getCurrancyName(for code: String) -> String {
+        return currencyLookup[code]?.name ?? "Unknown Currency"
     }
     
     func loadRates() {
         loadRates(baseCurrency: baseCurrency)
     }
     
+    
+    
     func swapBaseCurrency(to newCurrency: String) {
         guard newCurrency != baseCurrency else { return }
         if !selectedCurrencies.contains(baseCurrency) {
             selectedCurrencies.append(baseCurrency)
         }
-//        selectedCurrencies.removeAll { $0 == newCurrency }
         baseCurrency = newCurrency
         loadRates()
     }

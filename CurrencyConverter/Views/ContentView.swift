@@ -142,8 +142,10 @@ struct ContentView: View {
                 .frame(maxWidth: .infinity)
                 .padding()
             } else {
+                let currencies = viewModel.userSelectedCurrencies()
                 // Show normal currency rows
-                ForEach(indexedCurrencies, id: \.offset) { index, item in
+                ForEach(currencies.indices, id: \.self) { index in
+                    let item = currencies[index]
                     CurrencyRowView(
                         item: item,
                         baseCurrency: viewModel.baseCurrency,

@@ -71,11 +71,6 @@
             "name": "Belize Dollar"
         },
         {
-            "flag": "🇧🇯",
-            "code": "xof",
-            "name": "West African CFA franc"
-        },
-        {
             "flag": "🇧🇹",
             "code": "btn",
             "name": "Bhutanese Ngultrum"
@@ -111,11 +106,6 @@
             "name": "Bulgarian Lev"
         },
         {
-            "flag": "🇧🇫",
-            "code": "xof",
-            "name": "West African CFA franc"
-        },
-        {
             "flag": "🇧🇮",
             "code": "bif",
             "name": "Burundian Franc"
@@ -126,11 +116,6 @@
             "name": "Cambodian Riel"
         },
         {
-            "flag": "🇨🇲",
-            "code": "xaf",
-            "name": "Central African CFA franc"
-        },
-        {
             "flag": "🇨🇦",
             "code": "cad",
             "name": "Canadian Dollar"
@@ -139,16 +124,6 @@
             "flag": "🇨🇻",
             "code": "cve",
             "name": "Cape Verdean Escudo"
-        },
-        {
-            "flag": "🇨🇫",
-            "code": "xaf",
-            "name": "Central African CFA franc"
-        },
-        {
-            "flag": "🇹🇩",
-            "code": "xaf",
-            "name": "Central African CFA franc"
         },
         {
             "flag": "🇨🇱",
@@ -206,11 +181,6 @@
             "name": "Egyptian Pound"
         },
         {
-            "flag": "🇬🇶",
-            "code": "xaf",
-            "name": "Central African CFA franc"
-        },
-        {
             "flag": "🇪🇷",
             "code": "ern",
             "name": "Eritrean Nakfa"
@@ -231,11 +201,6 @@
             "name": "Fijian Dollar"
         },
         {
-            "flag": "🇬🇦",
-            "code": "xaf",
-            "name": "Central African CFA franc"
-        },
-        {
             "flag": "🇬🇲",
             "code": "gmd",
             "name": "Gambian Dalasi"
@@ -251,11 +216,6 @@
             "name": "Ghanaian Cedi"
         },
         {
-            "flag": "🇬🇩",
-            "code": "xcd",
-            "name": "East Caribbean Dollar"
-        },
-        {
             "flag": "🇬🇹",
             "code": "gtq",
             "name": "Guatemalan Quetzal"
@@ -264,11 +224,6 @@
             "flag": "🇬🇳",
             "code": "gnf",
             "name": "Guinean Franc"
-        },
-        {
-            "flag": "🇬🇼",
-            "code": "xof",
-            "name": "West African CFA franc"
         },
         {
             "flag": "🇬🇾",
@@ -351,11 +306,6 @@
             "name": "Kenyan Shilling"
         },
         {
-            "flag": "🇰🇮",
-            "code": "aud",
-            "name": "Australian Dollar"
-        },
-        {
             "flag": "🇰🇼",
             "code": "kwd",
             "name": "Kuwaiti Dinar"
@@ -421,11 +371,6 @@
             "name": "Maldivian Rufiyaa"
         },
         {
-            "flag": "🇲🇱",
-            "code": "xof",
-            "name": "West African CFA franc"
-        },
-        {
             "flag": "🇲🇷",
             "code": "mru",
             "name": "Mauritanian Ouguiya"
@@ -484,11 +429,6 @@
             "flag": "🇳🇮",
             "code": "nio",
             "name": "Nicaraguan Córdoba"
-        },
-        {
-            "flag": "🇳🇪",
-            "code": "xof",
-            "name": "West African CFA franc"
         },
         {
             "flag": "🇳🇬",
@@ -574,11 +514,6 @@
             "flag": "🇸🇦",
             "code": "sar",
             "name": "Saudi Riyal"
-        },
-        {
-            "flag": "🇸🇳",
-            "code": "xof",
-            "name": "West African CFA franc"
         },
         {
             "flag": "🇷🇸",
@@ -681,11 +616,6 @@
             "name": "Thai Baht"
         },
         {
-            "flag": "🇹🇬",
-            "code": "xof",
-            "name": "West African CFA franc"
-        },
-        {
             "flag": "🇹🇴",
             "code": "top",
             "name": "Tongan Paʻanga"
@@ -774,6 +704,21 @@
             "flag": "🇿🇼",
             "code": "zwl",
             "name": "Zimbabwean Dollar"
+        },
+        {
+            "flag": "🇬🇩",
+            "code": "xcd",
+            "name": "East Caribbean Dollar"
+        },
+        {
+            "flag": "🏴",
+            "code": "xaf",
+            "name": "Central African CFA Franc"
+        },
+        {
+            "flag": "🏴",
+            "code": "xof",
+            "name": "West African CFA Franc"
         }
     ]
 }

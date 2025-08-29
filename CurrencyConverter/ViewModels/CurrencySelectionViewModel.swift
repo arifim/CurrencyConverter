@@ -12,6 +12,7 @@ import SwiftUI
 class CurrencySelectionViewModel: ObservableObject {
     
     @Published var selectedCurrencies: [String]
+    
     let allCurrencies = CurrencyLoader.loadCurrencies()
     
     init(selectedCurrencies: [String]) {
