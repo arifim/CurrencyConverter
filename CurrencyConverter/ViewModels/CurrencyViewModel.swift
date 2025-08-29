@@ -42,11 +42,12 @@ class CurrencyViewModel: ObservableObject {
     
     private func startNetworkMonitoring() {
         networkMonitor.pathUpdateHandler = { [weak self] path in
-            DispatchQueue.main.async {
-                self?.isConnected = path.status == .satisfied
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                self.isConnected = path.status == .satisfied
                 
-                if path.status == .satisfied && self?.rates.isEmpty == true {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                if path.status == .satisfied && self.rates.isEmpty {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + NetworkConstants.retryDelay) { [weak self] in
                         self?.retryLoadingIfNeeded()
                     }
                 }
@@ -84,7 +85,7 @@ class CurrencyViewModel: ObservableObject {
         lastLoadedBaseCurrency = baseCurrency
         
         service.fetchRates(baseCurrancy: baseCurrency)
-            .timeout(.seconds(10), scheduler: DispatchQueue.main)
+            .timeout(.seconds(NetworkConstants.requestTimeout), scheduler: DispatchQueue.main)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
                 switch completion {
@@ -145,4 +146,9 @@ class CurrencyViewModel: ObservableObject {
         errorMessage = nil
         loadRates()
     }
+}
+
+private struct NetworkConstants {
+    static let retryDelay: Double = 1.0
+    static let requestTimeout: Double = 10.0
 }

@@ -46,19 +46,21 @@ struct CurrencyRowView: View {
         .offset(x: isVisible ? 0 : 350)
         .opacity(isVisible ? 1 : 0.5)
         .onAppear {
-            
-            if !hasAnimated {
+                guard !hasAnimated else {
+                    isVisible = true
+                    return
+                }
+                
                 isVisible = false
-                DispatchQueue.main.asyncAfter(deadline: .now() + Double(delay) * 0.1) {
-                    withAnimation(.easeOut(duration: 0.2)) {
+                let animationDelay = Double(delay) * AnimationConstants.baseDelay
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + animationDelay) {
+                    withAnimation(.easeOut(duration: AnimationConstants.animationDuration)) {
                         isVisible = true
                         hasAnimated = true
                     }
                 }
-            } else {
-                isVisible = true
             }
-        }
     }
     
     private var convertedAmount: String {
@@ -66,6 +68,13 @@ struct CurrencyRowView: View {
         let convertedRate = item.rate * amount
         return String(format: "%.2f", convertedRate)
     }
+}
+
+private struct AnimationConstants {
+    static let slideOffset: CGFloat = 350
+    static let baseDelay: Double = 0.1
+    static let animationDuration: Double = 0.2
+    static let initialOpacity: Double = 0.5
 }
 
 #Preview {
