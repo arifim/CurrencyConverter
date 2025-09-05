@@ -12,8 +12,8 @@ struct ContentView: View {
     @StateObject var viewModel = CurrencyViewModel()
     @FocusState private var isTextFieldFocused: Bool
     @State private var showingCurrencySelection = false
-    
     @State var amountText: String = ""
+    @State var amountBackgroundColor: Color = .clear
     
     
     var body: some View {
@@ -50,6 +50,15 @@ struct ContentView: View {
                     viewModel.loadRates()
                 }
             }
+            
+            CustomKeyboardView(inputText: $amountText) {
+                Button {
+                    amountText = ""
+                } label: {
+                    Text("clear")
+                        .font(.title3)
+                }
+            }
         }
         .onAppear() {
             setupInitialData()
@@ -72,43 +81,21 @@ struct ContentView: View {
                     .font(.largeTitle)
                 Text(viewModel.baseCurrency.uppercased())
                     .font(.title3)
-                
-                TextField("1.00", text: $amountText)
-                    .multilineTextAlignment(.trailing)
+                Spacer()
+                Text(amountText.isEmpty ? "Enter amount" : amountText)
                     .font(.title3).bold()
-                    .foregroundStyle(isValidAmount ? .blue : .red)
-                    .keyboardType(.decimalPad)
-                    .focused($isTextFieldFocused)
+                    .foregroundStyle(isValidAmount ? .blue.opacity(0.5) : .red)
+                    .background(amountBackgroundColor)
+                    .onTapGesture {
+                        amountBackgroundColor = .red.opacity(0.2)
+                    }
                     .onChange(of: amountText) { _, newValue in
-                        // Sanitize input in real-time
-                        let sanitized = newValue.sanitizedDecimalInput
-                        if sanitized != newValue {
-                            amountText = sanitized
-                            // Add haptic feedback for invalid input
-                            let impactFeedback = UIImpactFeedbackGenerator(style: .light)
-                            impactFeedback.impactOccurred()
-                        }
                         
                         // Limit to reasonable length (e.g., 10 characters)
                         if amountText.count > 10 {
                             amountText = String(amountText.prefix(10))
                         }
-                    }
-                    .toolbar {
-                        ToolbarItemGroup(placement: .keyboard) {
-                            Button("Clear") {
-                                amountText = ""
-                            }
-                            .foregroundColor(.blue)
-                            
-                            Spacer()
-                            
-                            Button("Done") {
-                                isTextFieldFocused = false
-                            }
-                            .foregroundColor(.blue)
-                            .fontWeight(.semibold)
-                        }
+                        amountBackgroundColor = .clear
                     }
             }
             

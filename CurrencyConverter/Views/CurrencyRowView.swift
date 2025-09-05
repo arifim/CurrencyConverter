@@ -35,7 +35,7 @@ struct CurrencyRowView: View {
             } else {
                 VStack(alignment: .trailing) {
                     Text(convertedAmount)
-                        .font(.title3).bold()
+                        .font(.title2).bold()
                     let formatedRate = String(format: "%.4f", item.rate)
                     Text("1 \(baseCurrency.uppercased()) = \(formatedRate) \(item.currency.code.uppercased())")
                         .font(.footnote)
