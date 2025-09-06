@@ -14,49 +14,46 @@ struct ContentView: View {
     @State private var showingCurrencySelection = false
     @State var amountText: String = ""
     @State var amountBackgroundColor: Color = .clear
+    @State private var showKeyboard: Bool = false
     
     
     var body: some View {
         
         NavigationStack {
-            List {
-                selectedCurrencySection
-                if viewModel.isConnected {
-                    if !viewModel.userSelectedCurrencies().isEmpty {
-                        convertedCurrenciesSection
+            VStack {
+                List {
+                    selectedCurrencySection
+                        .onTapGesture {
+                            isTextFieldFocused = false
+                        }
+                    if viewModel.isConnected {
+                        if !viewModel.userSelectedCurrencies().isEmpty {
+                            convertedCurrenciesSection
+                        } else {
+                            noCurrenciesSelected
+                        }
                     } else {
-                        noCurrenciesSelected
-                    }
-                } else {
-                    noInternetConnection
-                }
-            }
-            .refreshable(action: {
-                viewModel.refreshRates()
-            })
-            .navigationTitle("Currency Converter")
-            .toolbar {
-                ToolbarItem {
-                    Button("Add") {
-                        showingCurrencySelection.toggle()
+                        noInternetConnection
                     }
                 }
-            }
-            .sheet(isPresented: $showingCurrencySelection) {  // Add this sheet
-                CurrencySelectionView(selectedCurrencies: viewModel.selectedCurrencies, baseCurrency: viewModel.baseCurrency) { newSelection in
-                    viewModel.selectedCurrencies = newSelection  // Save changes back
-                } onBaseCurrencyRemoved: { newBaseCurrency in
-                    viewModel.baseCurrency = newBaseCurrency
-                    viewModel.loadRates()
+                .refreshable(action: {
+                    viewModel.refreshRates()
+                })
+                .navigationTitle("Currency Converter")
+                .toolbar {
+                    ToolbarItem {
+                        Button("Add") {
+                            showingCurrencySelection.toggle()
+                        }
+                    }
                 }
-            }
-            
-            CustomKeyboardView(inputText: $amountText) {
-                Button {
-                    amountText = ""
-                } label: {
-                    Text("clear")
-                        .font(.title3)
+                .sheet(isPresented: $showingCurrencySelection) {  // Add this sheet
+                    CurrencySelectionView(selectedCurrencies: viewModel.selectedCurrencies, baseCurrency: viewModel.baseCurrency) { newSelection in
+                        viewModel.selectedCurrencies = newSelection  // Save changes back
+                    } onBaseCurrencyRemoved: { newBaseCurrency in
+                        viewModel.baseCurrency = newBaseCurrency
+                        viewModel.loadRates()
+                    }
                 }
             }
         }
@@ -82,13 +79,22 @@ struct ContentView: View {
                 Text(viewModel.baseCurrency.uppercased())
                     .font(.title3)
                 Spacer()
-                Text(amountText.isEmpty ? "Enter amount" : amountText)
+                TextField("Enter amount", text: $amountText)
+                    .inputView(content: {
+                        ZStack {
+                            NumericKeyboard(text: $amountText) {
+                                Button("Done") {
+                                    isTextFieldFocused = false
+                                }
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 310)
+                    })
+                    .multilineTextAlignment(.trailing)
+                    .focused($isTextFieldFocused)
                     .font(.title3).bold()
-                    .foregroundStyle(isValidAmount ? .blue.opacity(0.5) : .red)
-                    .background(amountBackgroundColor)
-                    .onTapGesture {
-                        amountBackgroundColor = .red.opacity(0.2)
-                    }
+                    .foregroundStyle(isValidAmount ? Color.primary : .red)
                     .onChange(of: amountText) { _, newValue in
                         
                         // Limit to reasonable length (e.g., 10 characters)
