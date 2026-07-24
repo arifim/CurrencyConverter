@@ -1,30 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy Policy — GlobeExchange+</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f4f5f8;
+    --page: #ffffff;
+    --fg: #16181d;
+    --muted: #6b7280;
+    --accent: #2f6bff;
+    --accent-2: #6b4bff;
+    --card: #f7f8fb;
+    --card-border: #ececf1;
+    --pill: rgba(255,255,255,0.22);
+    --shadow: 0 24px 60px -24px rgba(20,30,80,0.28);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0a0b0e;
+      --page: #131519;
+      --fg: #f2f4f8;
+      --muted: #9aa1ad;
+      --accent: #6f9bff;
+      --accent-2: #a78bff;
+      --card: #1a1d23;
+      --card-border: #262a31;
+      --pill: rgba(255,255,255,0.16);
+      --shadow: 0 24px 60px -20px rgba(0,0,0,0.7);
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    padding: 24px;
+  }
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    background: var(--page);
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
 
-Privacy Policy
+  /* Hero */
+  .hero {
+    position: relative;
+    padding: 64px 40px 56px;
+    text-align: center;
+    color: #fff;
+    background:
+      radial-gradient(120% 120% at 15% 0%, #6b4bff 0%, transparent 55%),
+      radial-gradient(120% 120% at 100% 30%, #2f6bff 0%, transparent 60%),
+      linear-gradient(135deg, #2f6bff 0%, #6b4bff 100%);
+    overflow: hidden;
+  }
+  .hero::after {
+    content: "";
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(rgba(255,255,255,0.12) 1px, transparent 1px);
+    background-size: 22px 22px;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .badge {
+    position: relative;
+    width: 84px; height: 84px;
+    margin: 0 auto 22px;
+    display: grid; place-items: center;
+    font-size: 40px;
+    background: rgba(255,255,255,0.16);
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 22px;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 10px 30px -8px rgba(0,0,0,0.4);
+  }
+  .hero h1 {
+    position: relative;
+    font-size: clamp(28px, 6vw, 40px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+  .hero .app {
+    position: relative;
+    margin-top: 8px;
+    font-size: 17px;
+    font-weight: 600;
+    opacity: 0.92;
+  }
+  .date-pill {
+    position: relative;
+    display: inline-block;
+    margin-top: 20px;
+    padding: 7px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    background: var(--pill);
+    border: 1px solid rgba(255,255,255,0.28);
+    border-radius: 999px;
+  }
 
-Global Exchange · Last updated: July 21, 2026
+  /* Body */
+  .content { padding: 44px 40px 20px; }
 
-Short version: Global Exchange does not collect, store, or share any personal information. There are no accounts, no tracking, no analytics, and no ads.
+  .tldr {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 20px 22px;
+    margin-bottom: 40px;
+    background: linear-gradient(135deg, rgba(47,107,255,0.10), rgba(107,75,255,0.10));
+    border: 1px solid var(--card-border);
+    border-radius: 18px;
+  }
+  .tldr .ic { font-size: 22px; line-height: 1.4; }
+  .tldr strong { color: var(--fg); }
+  .tldr p { color: var(--muted); font-size: 15.5px; }
 
-Information we collect
-We do not collect any personal information. Global Exchange has no user accounts and does not ask for your name, email address, location, or any other identifying information.
+  section { margin-bottom: 34px; }
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 10px;
+  }
+  h2 .dot {
+    width: 30px; height: 30px;
+    display: grid; place-items: center;
+    font-size: 16px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 9px;
+  }
+  section p { color: var(--muted); font-size: 16px; }
+  a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  a:hover { text-decoration: underline; }
 
-Data stored on your device
-Your preferences — the currencies you select, your base currency, and the most recently downloaded exchange rates — are stored locally on your device using Apple's standard on-device storage. This data never leaves your device and is removed when you delete the app.
+  footer {
+    margin-top: 8px;
+    padding: 26px 40px 40px;
+    border-top: 1px solid var(--card-border);
+    color: var(--muted);
+    font-size: 13.5px;
+    text-align: center;
+  }
 
-Network requests
-To show up-to-date exchange rates, the app downloads publicly available rate data from a third-party currency data provider (the Currency API by Fawaz Ahmed, delivered via public content delivery networks). These requests contain only the currency you are viewing. No personal information is transmitted with them.
+  @media (max-width: 560px) {
+    body { padding: 12px; }
+    .page { border-radius: 22px; }
+    .hero { padding: 52px 24px 44px; }
+    .content { padding: 32px 24px 12px; }
+    footer { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <h1>Privacy Policy</h1>
+      <div class="app">GlobeExchange+</div>
+      <span class="date-pill">Last updated · July 21, 2026</span>
+    </header>
 
-Third-party tracking
-Global Exchange does not use any advertising, analytics, or tracking frameworks, and does not track you across apps or websites.
+    <div class="content">
+      <div class="tldr">
+        <span class="ic">🔒</span>
+        <p><strong>In short:</strong> GlobeExchange+ collects no personal
+        information. No accounts, no tracking, no analytics, and no ads — ever.</p>
+      </div>
 
-Children's privacy
-The app does not collect personal information from anyone, including children under the age of 13.
+      <section>
+        <h2><span class="dot">📋</span> Information we collect</h2>
+        <p>We do not collect any personal information. GlobeExchange+ has no user
+        accounts and does not ask for your name, email address, location, or any
+        other identifying information.</p>
+      </section>
 
-Changes to this policy
-If this policy changes, the updated version will be posted on this page with a new "Last updated" date.
+      <section>
+        <h2><span class="dot">📱</span> Data stored on your device</h2>
+        <p>Your preferences — the currencies you select, your base currency, and
+        the most recently downloaded exchange rates — are stored locally on your
+        device using Apple's standard on-device storage. This data never leaves
+        your device and is removed when you delete the app.</p>
+      </section>
 
-Contact
-Questions about this policy can be sent to arif.rakhmanov@gmail.com
+      <section>
+        <h2><span class="dot">🌐</span> Network requests</h2>
+        <p>To show up-to-date exchange rates, the app downloads publicly available
+        rate data from a third-party currency data provider (the
+        <a href="https://github.com/fawazahmed0/exchange-api">Currency API by
+        Fawaz Ahmed</a>, delivered via public content delivery networks). These
+        requests contain only the currency you are viewing. No personal
+        information is transmitted with them.</p>
+      </section>
 
-© 2026 Global Exchange. All rights reserved.
+      <section>
+        <h2><span class="dot">🚫</span> Third-party tracking</h2>
+        <p>GlobeExchange+ does not use any advertising, analytics, or tracking
+        frameworks, and does not track you across apps or websites.</p>
+      </section>
 
+      <section>
+        <h2><span class="dot">🧸</span> Children's privacy</h2>
+        <p>The app does not collect personal information from anyone, including
+        children under the age of 13.</p>
+      </section>
+
+      <section>
+        <h2><span class="dot">🔄</span> Changes to this policy</h2>
+        <p>If this policy changes, the updated version will be posted on this page
+        with a new "Last updated" date.</p>
+      </section>
+
+      <section>
+        <h2><span class="dot">✉️</span> Contact</h2>
+        <p>Questions about this policy can be sent to
+        <a href="mailto:arif.rakhmanov@gmail.com">arif.rakhmanov@gmail.com</a>.</p>
+      </section>
+    </div>
+
+    <footer>
+      © 2026 GlobeExchange+. All rights reserved.
+    </footer>
+  </main>
+</body>
+</html>
