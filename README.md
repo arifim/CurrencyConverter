@@ -5,7 +5,7 @@ Works offline with your last saved rates.
 
 ## Support
 
-Questions, bugs, or feedback? → [Support page](https://arifim.github.io/CurrencyConverter/support.html)
+Questions, bugs, or feedback? → 
 Email: arif.rakhmanov@gmail.com
 
 ## Privacy
